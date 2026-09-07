@@ -1,0 +1,6 @@
+{
+  "prediction": {
+    "label": "cat",
+    "confidence": 0.98
+  }
+}
