@@ -1,0 +1,12 @@
+# Byte-compiled / Python cache files
+__pycache__/
+*.py[cod]
+
+# Local model artifacts
+model/
+*.joblib
+*.tar.gz
+
+# Environment variables & local secrets
+.envmodel.tar.gz 
+model/ 
