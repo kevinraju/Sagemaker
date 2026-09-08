@@ -1,22 +1,29 @@
 import boto3
 import sagemaker
-from sagemaker.sklearn.model import SKLearnModel
+from sagemaker import Model
 
 # Initialize SageMaker Session
 sagemaker_session = sagemaker.Session()
 role = "arn:aws:iam::YOUR_ACCOUNT_ID:role/service-role/AmazonSageMaker-ExecutionRole"
 
-# Define the SKLearn Model Container
-model = SKLearnModel(
-    model_data="s3://your-s3-bucket/model.tar.gz",  # Path to trained model tarball in S3
+# Define generic Model container using a pre-built Scikit-learn image
+image_uri = sagemaker.image_uris.retrieve(
+    framework="sklearn",
+    region=sagemaker_session.boto_region_name,
+    version="1.2-1"
+)
+
+model = Model(
+    image_uri=image_uri,
+    model_data="s3://your-s3-bucket/model.tar.gz",
     role=role,
-    entry_point="train.py",                          # Inference code from Step 1
-    framework_version="1.2-1"
+    entry_point="train.py",
+    sagemaker_session=sagemaker_session
 )
 
 # Deploy to a real-time HTTP endpoint
 predictor = model.deploy(
-    instance_type="ml.t2.medium",                    # Free Tier eligible instance type
+    instance_type="ml.t2.medium",
     initial_instance_count=1,
     endpoint_name="sagemaker-prediction-endpoint"
 )
