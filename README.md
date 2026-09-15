@@ -104,4 +104,4 @@ Python 3.x
 scikit-learn, joblib, boto3, sagemaker
 
 AWS CLI configured (aws configure)
-![SageMaker API Gateway Prediction Output](./prediciton.png)
+![SageMaker API Gateway Prediction Output](./prediciton.png.png)
