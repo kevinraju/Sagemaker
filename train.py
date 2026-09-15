@@ -19,9 +19,11 @@ def train():
     print("Model saved successfully!")
 
 # 2. SageMaker Inference Handler (Used when endpoint receives API requests)
+
 def model_fn(model_dir):
-    """Loads the saved model from disk into memory."""
-    model = joblib.load(os.path.join(model_dir, "model.joblib"))
+    """Loads the model from the model_dir directory."""
+    model_path = os.path.join(model_dir, "model.joblib")
+    model = joblib.load(model_path)
     return model
 
 def predict_fn(input_data, model):

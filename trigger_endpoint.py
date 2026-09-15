@@ -1,34 +1,36 @@
-import os
 import json
 import boto3
 
-# Initialize SageMaker Runtime client
-runtime = boto3.client('sagemaker-runtime')
-endpoint_name = os.environ.get('ENDPOINT_NAME', 'sagemaker-prediction-endpoint')
+# Initialize SageMaker runtime client
+sagemaker_runtime = boto3.client("sagemaker-runtime")
+
+ENDPOINT_NAME = "sagemaker-serverless-endpoint-v4"
 
 def lambda_handler(event, context):
     try:
-        # Parse incoming JSON payload from event/API Gateway
-        body = json.loads(event.get('body', '{}')) if isinstance(event.get('body'), str) else event
-        data = body.get('data', [[1, 2]])  # Default fallback feature array
-        
-        # Invoke SageMaker Endpoint
-        response = runtime.invoke_endpoint(
-            EndpointName=endpoint_name,
-            ContentType='application/json',
-            Body=json.dumps(data)
+        # Extract payload from API Gateway or direct invocation event
+        if "body" in event:
+            payload = event["body"]
+        else:
+            payload = json.dumps(event)
+
+        # Invoke the SageMaker Serverless Endpoint
+        response = sagemaker_runtime.invoke_endpoint(
+            EndpointName=ENDPOINT_NAME,
+            ContentType="application/json",
+            Body=payload
         )
-        
-        # Read prediction output
-        result = json.loads(response['Body'].read().decode())
-        
+
+        # Parse response body
+        result = json.loads(response["Body"].read().decode())
+
         return {
-            'statusCode': 200,
-            'body': json.dumps({'prediction': result})
+            "statusCode": 200,
+            "body": json.dumps({"prediction": result})
         }
 
     except Exception as e:
         return {
-            'statusCode': 500,
-            'body': json.dumps({'error': str(e)})
+            "statusCode": 500,
+            "body": json.dumps({"error": str(e)})
         }

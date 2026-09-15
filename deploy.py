@@ -1,31 +1,30 @@
 import boto3
 import sagemaker
-from sagemaker import Model
+from sagemaker.sklearn.model import SKLearnModel
+from sagemaker.serverless import ServerlessInferenceConfig
 
-# Initialize SageMaker Session
 sagemaker_session = sagemaker.Session()
-role = "arn:aws:iam::YOUR_ACCOUNT_ID:role/service-role/AmazonSageMaker-ExecutionRole"
+role = "arn:aws:iam::508139322670:role/AmazonSageMaker-ExecutionRole"
 
-# Define generic Model container using a pre-built Scikit-learn image
-image_uri = sagemaker.image_uris.retrieve(
-    framework="sklearn",
-    region=sagemaker_session.boto_region_name,
-    version="1.2-1"
-)
-
-model = Model(
-    image_uri=image_uri,
-    model_data="s3://your-s3-bucket/model.tar.gz",
+model = SKLearnModel(
+    model_data="s3://hanan-sagemaker-model-bucket/model.tar.gz",
     role=role,
     entry_point="train.py",
+    framework_version="1.2-1",
+    py_version="py3",
     sagemaker_session=sagemaker_session
 )
 
-# Deploy to a real-time HTTP endpoint
-predictor = model.deploy(
-    instance_type="ml.t2.medium",
-    initial_instance_count=1,
-    endpoint_name="sagemaker-prediction-endpoint"
+serverless_config = ServerlessInferenceConfig(
+    memory_size_in_mb=3072,
+    max_concurrency=5
 )
 
-print(f"Endpoint deployed successfully: {predictor.endpoint_name}")
+print("Starting serverless endpoint deployment to SageMaker...")
+
+predictor = model.deploy(
+    serverless_inference_config=serverless_config,
+    endpoint_name="sagemaker-serverless-endpoint-v4"
+)
+
+print(f"Deployment completed! Endpoint Name: {predictor.endpoint_name}")
