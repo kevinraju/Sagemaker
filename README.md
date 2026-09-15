@@ -78,6 +78,7 @@ def lambda_handler(event, context):
         'headers': {'Content-Type': 'application/json'},
         'body': json.dumps({'prediction': result})
     }
+```
 🚀 How to Run & Test
 1. Local Offline Verification
 Run a prediction locally on your computer to verify dependencies and model output:
@@ -92,9 +93,9 @@ python deploy.py
 3. Test Live AWS Endpoint via Boto3
 PowerShell
 python test_endpoint.py
-4. Test End-to-End API Gateway via PowerShell
-PowerShell
-Invoke-RestMethod -Uri "https://508139322670[.execute-api.us-east-1.amazonaws.com/predict](https://.execute-api.us-east-1.amazonaws.com/predict)" `
+### 4. Test End-to-End API Gateway via PowerShell
+```powershell
+Invoke-RestMethod -Uri "[https://dwg9598qu8.execute-api.us-east-1.amazonaws.com/predict](https://dwg9598qu8.execute-api.us-east-1.amazonaws.com/predict)" `
                   -Method POST `
                   -ContentType "application/json" `
                   -Body '[[1.0, 2.0]]'
@@ -104,6 +105,5 @@ Python 3.x
 scikit-learn, joblib, boto3, sagemaker
 
 **AWS CLI configured** (`aws configure`)
-
 
 ![SageMaker API Gateway Prediction Output](./Prediction.png)
